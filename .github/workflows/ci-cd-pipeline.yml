@@ -80,7 +80,7 @@ jobs:
  
 
     - name: Run tests and code analysis
-      run: dotnet test ./WebApplication1/WebApplication1.Tests/WebApplication1.Tests.csproj.user --configuration Debug
+      run: dotnet test ./WebApplication1/WebApplication1Tests/WebApplication1Tests.csproj --configuration Debug
 
  
 
