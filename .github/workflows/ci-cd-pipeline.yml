@@ -1,0 +1,138 @@
+name: CI/CD Pipeline
+
+ 
+
+on:
+  push:
+    branches:
+      - main
+
+ 
+
+env:
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+
+ 
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+
+ 
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+ 
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.0.0
+
+ 
+
+    - name: Restore dependencies
+      run: nuget restore ./OnlineBookWebsite/OnlineBookWebsite.sln
+
+ 
+
+    - name: Build the application
+      run: msbuild ./OnlineBookWebsite/OnlineBookWebsite.sln /p:Configuration=Release
+
+ 
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: OnlineBookWebsite-artifacts
+        path: |
+          OnlineBookWebsite/bin/Release
+
+ 
+
+  test:
+    name: Test
+    runs-on: windows-latest
+    needs: build
+
+ 
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+ 
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.0.0
+
+ 
+
+    - name: Restore dependencies
+      run: nuget restore ./OnlineBookWebsite/OnlineBookWebsite.sln
+
+ 
+
+    - name: Build the application
+      run: msbuild ./OnlineBookWebsite/OnlineBookWebsite.sln /t:build /p:Configuration=Debug
+
+ 
+
+    - name: Run tests and code analysis
+      run: dotnet test ./OnlineBookWebsite/OnlineBookWebsite.Tests/OnlineBookWebsite.Tests.csproj --configuration Debug
+
+ 
+
+  deploy:
+    name: Deploy
+    runs-on: windows-latest
+    needs: test
+
+ 
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+ 
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.0.0
+
+ 
+
+    - name: Restore dependencies
+      run: nuget restore ./OnlineBookWebsite/OnlineBookWebsite.sln
+
+ 
+
+    - name: Build and publish the application
+      run: msbuild ./OnlineBookWebsite/OnlineBookWebsite.sln /p:Configuration=Release /t:Publish /p:PublishFolder=./publish
+
+ 
+
+    # Add your deployment steps here (e.g., deploying to Azure App Service, IIS, etc.)
+    # For demonstration purposes, we'll just print a message:
+    - name: Print deployment message
+      run: echo "The application has been deployed to the staging environment."
+
+ 
+
+  notify:
+    name: Notify Team on Failure
+    runs-on: windows-latest
+    needs: [build, test, deploy]
+
+ 
+
+    steps:
+    - name: Check for build, test, or deployment failure
+      id: check-status
+      run: echo "Build, test, and deployment successful!"  # We'll handle the notification only if there's an actual failure
+
+ 
+
+    - name: Send notification on failure
+      if: ${{ failure() }}
+      run: echo "Build, test, or deployment failed! Notify the team."  # You can integrate actual notification mechanisms like email or Slack here
