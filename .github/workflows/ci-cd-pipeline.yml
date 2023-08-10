@@ -33,21 +33,21 @@ jobs:
  
 
     - name: Restore dependencies
-      run: nuget restore ./OnlineBookWebsite/OnlineBookWebsite.sln
+      run: nuget restore ./WebApplication1/WebApplication1.sln
 
  
 
     - name: Build the application
-      run: msbuild ./OnlineBookWebsite/OnlineBookWebsite.sln /p:Configuration=Release
+      run: msbuild ./WebApplication1/WebApplication1.sln /p:Configuration=Release
 
  
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: OnlineBookWebsite-artifacts
+        name: WebApplication1-artifacts
         path: |
-          OnlineBookWebsite/bin/Release
+          WebApplication1/bin/Release
 
  
 
@@ -70,17 +70,17 @@ jobs:
  
 
     - name: Restore dependencies
-      run: nuget restore ./OnlineBookWebsite/OnlineBookWebsite.sln
+      run: nuget restore ./WebApplication1/WebApplication1.sln
 
  
 
     - name: Build the application
-      run: msbuild ./OnlineBookWebsite/OnlineBookWebsite.sln /t:build /p:Configuration=Debug
+      run: msbuild ./WebApplication1/WebApplication1.sln /t:build /p:Configuration=Debug
 
  
 
     - name: Run tests and code analysis
-      run: dotnet test ./OnlineBookWebsite/OnlineBookWebsite.Tests/OnlineBookWebsite.Tests.csproj --configuration Debug
+      run: dotnet test ./WebApplication1/WebApplication1.Tests/WebApplication1.Tests.csproj --configuration Debug
 
  
 
@@ -103,12 +103,12 @@ jobs:
  
 
     - name: Restore dependencies
-      run: nuget restore ./OnlineBookWebsite/OnlineBookWebsite.sln
+      run: nuget restore ./WebApplication1/WebApplication1.sln
 
  
 
     - name: Build and publish the application
-      run: msbuild ./OnlineBookWebsite/OnlineBookWebsite.sln /p:Configuration=Release /t:Publish /p:PublishFolder=./publish
+      run: msbuild ./WebApplication1/WebApplication1.sln /p:Configuration=Release /t:Publish /p:PublishFolder=./publish
 
  
 
