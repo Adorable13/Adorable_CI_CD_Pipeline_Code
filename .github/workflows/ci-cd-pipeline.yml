@@ -103,7 +103,7 @@ jobs:
  
 
     - name: Restore dependencies
-      run: nuget restore ./WebApplication1111/WebApplication1.sln
+      run: nuget restore ./WebApplication1/WebApplication1.sln
 
  
 
